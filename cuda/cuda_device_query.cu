@@ -52,7 +52,7 @@ int check_device(int rank)
       printf("cudaGetDeviceCount returned: %s\n",cudaGetErrorString(err));
     }
 
-    if (deviceCount == 1)
+    if (deviceCount >= 1)
     {
       cudaDeviceProp deviceProp;
       cudaGetDeviceProperties(&deviceProp, 0);
@@ -63,6 +63,7 @@ int check_device(int rank)
         return 0;
       }
     }
+    printf("Rank %d: %d devices supporting CUDA\n", rank, deviceCount );
     return deviceCount;
 }
 
@@ -70,7 +71,7 @@ void print_device_info(int rank, int dev)
 {
    cudaDeviceProp deviceProp;
    cudaGetDeviceProperties(&deviceProp, dev);
-  
+
     printf("\nRank %d - Device %d: \"%s\"\n", rank, dev, deviceProp.name);
     printf("  Major revision number:                         %d\n",
                deviceProp.major);
@@ -85,7 +86,7 @@ void print_device_info(int rank, int dev)
                8 * deviceProp.multiProcessorCount);
 #endif
     printf("  Total amount of constant memory:               %lu bytes\n",
-               deviceProp.totalConstMem); 
+               deviceProp.totalConstMem);
     printf("  Total amount of shared memory per block:       %lu bytes\n",
                deviceProp.sharedMemPerBlock);
     printf("  Total number of registers available per block: %d\n",

@@ -18,8 +18,9 @@
  * 		University of Portsmouth
  *
  */
- 
+
 #include "Previewer.h"
+#include <string.h>
 
 namespace previewer
 {
@@ -29,16 +30,12 @@ namespace previewer
 	{
 		// Get path of executable
 		int ret;
-		pid_t pid; 
+		pid_t pid;
 		std::string exepath;
 
 		#ifndef SPLOTCHMAC
-		char pathbuf[1024];
-		int err = readlink("/proc/self/exe", pathbuf, 1024);
-		if(err = -1)
-		{
-			planck_fail("Splotch (mac) readlink failed");
-		}
+		char pathbuf[PATH_MAX];
+		ssize_t err = readlink("/proc/self/exe", pathbuf, PATH_MAX);
 		// Remove executable name from path
 		int len = 0;
 		exepath = std::string(pathbuf);
@@ -54,13 +51,13 @@ namespace previewer
 		char pathbuf[PROC_PIDPATHINFO_MAXSIZE];
 		pid = getpid();
 		ret = proc_pidpath (pid, pathbuf, sizeof(pathbuf));
-		if ( ret <= 0 ) 
+		if ( ret <= 0 )
 		{
 			std::cout << "Could not get path of exe.\n";
 			std::cout << "PID: " << pid << std::endl;
 			exit(0);
-		} 
-		else 
+		}
+		else
 		{
 			// Remove executable name from path
 			int len = 0;
@@ -73,7 +70,7 @@ namespace previewer
 				}
 			exepath = exepath.substr(0,len+1);
 		}
-		
+
 		#endif
 
 		DebugPrint("Previewer path: %s\n", exepath.c_str());
@@ -240,7 +237,7 @@ namespace previewer
 		// Store the new cursor position
 		event.mouseX = xPosition;
 		event.mouseY = yPosition;
-		
+
 		// Store translated cursor at button click
 		event.translatedMouseX = xPosition;
 		event.translatedMouseY = screenSize.y - yPosition; // (swap axis);
@@ -314,7 +311,7 @@ namespace previewer
 		param->setParam<double>("camera_x",camPos.x);
 		param->setParam<double>("camera_y",camPos.y);
 		param->setParam<double>("camera_z",camPos.z);
-		// Use campos - lookat as our lookat is normalised camera-relative coords 
+		// Use campos - lookat as our lookat is normalised camera-relative coords
 		// and splotch expects non-normalised world-relative coords.
 
 		// std::cout << "up.x: " << camUp.x << std::endl;
@@ -476,22 +473,22 @@ namespace previewer
 	void Previewer::SetParameter(std::string name, std::string value)
 	{
 		paramfile* param = parameterInfo.GetParamFileReference();
-		param->setParam<std::string>(name,value);		
+		param->setParam<std::string>(name,value);
 	}
 
 
-	// Note this is only useful for displaying parameters. They are not converted to their original 
+	// Note this is only useful for displaying parameters. They are not converted to their original
 	// format, they are kept as string
 	std::string Previewer::GetParameter(std::string name)
 	{
 		paramfile* param = parameterInfo.GetParamFileReference();
-		return param->find<std::string>(name);		
+		return param->find<std::string>(name);
 	}
 
 	std::string Previewer::GetParameter(std::string name, std::string dflt)
 	{
 		paramfile* param = parameterInfo.GetParamFileReference();
-		return param->find<std::string>(name, dflt);			
+		return param->find<std::string>(name, dflt);
 	}
 
 	void Previewer::ResetCamera()

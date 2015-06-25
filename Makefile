@@ -8,13 +8,13 @@
 #######################################################################
 
 #--------------------------------------- Switch on Previewer
-#OPT += -DPREVIEWER
+OPT += -DPREVIEWER
 
 #--------------------------------------- Switch on DataSize
 OPT += -DLONGIDS
 
 #--------------------------------------- Switch on MPI
-OPT += -DUSE_MPI
+#OPT += -DUSE_MPI
 #OPT += -DUSE_MPIIO
 
 #--------------------------------------- Switch on HDF5
@@ -71,7 +71,7 @@ SYSTYPE="SuperMuc"
 ifeq (USE_MPI,$(findstring USE_MPI,$(OPT)))
  CC       = mpic++
 else
- CC       = g++
+ CC       = g++-4.6
 endif
 
 # OpenMP compiler switch
@@ -82,16 +82,16 @@ SUP_INCL = -I. -Icxxsupport -Ic_utils
 
 
 # optimization and warning flags (g++)
-OPTIMIZE =  -pedantic -Wno-long-long -Wfatal-errors -Wextra -Wall -Wstrict-aliasing=2 -Wundef -Wshadow -Wwrite-strings -Wredundant-decls -Woverloaded-virtual -Wcast-qual -Wcast-align -Wpointer-arith -std=c++11
+OPTIMIZE =  -pedantic -Wno-long-long -Wfatal-errors -Wextra -Wall -Wstrict-aliasing=2 -Wundef -Wshadow -Wwrite-strings -Wredundant-decls -Woverloaded-virtual -Wcast-qual -Wcast-align -Wpointer-arith -std=c++0x
 #-Wno-newline-eof -g
-#-Wold-style-cast -std=c++11
+#-Wold-style-cast -std=c++0x
 ifeq ($(SYSTYPE),"generic")
 # OPTIMIZE += -O2 -g -D TWOGALAXIES
  OPTIMIZE += -O2 -g
 
 # Generic 64bit cuda setup
 ifeq (CUDA,$(findstring CUDA,$(OPT)))
-NVCC       =  nvcc
+NVCC       =  nvcc -ccbin /usr/lib/ccache/g++-4.6 -g
 CUDA_HOME  =  /opt/nvidia/cudatoolkit/default
 LIB_OPT  += -L$(CUDA_HOME)/lib64 -lcudart
 SUP_INCL += -I$(CUDA_HOME)/include
@@ -102,7 +102,7 @@ endif
 
 # OpenMP compiler switch
 #OMP      = -fopenmp
-SUP_INCL = -I. -Icxxsupport -Ic_utils
+SUP_INCL = -I. -Icxxsupport -Ic_utils -I/usr/include
 
 #CUDA_HOME = /usr/local/cuda/
 ifeq (USE_MPIIO,$(findstring USE_MPIIO,$(OPT)))
@@ -148,9 +148,9 @@ ifeq ($(SYSTYPE),"SuperMuc")
  ifeq (USE_MPI,$(findstring USE_MPI,$(OPT)))
   CC       = mpiCC
  else
-  CC       = ifc
+  CC       = g++-4.6
  endif
- OPTIMIZE = -O3 -g -std=c++11
+ OPTIMIZE = -O3 -g -std=c++0x
  OMP =   -fopenmp
 endif
 
@@ -160,7 +160,7 @@ ifeq ($(SYSTYPE),"RZG-SLES11-VIZ")
  ifeq (USE_MPI,$(findstring USE_MPI,$(OPT)))
   CC       = mpic++
  else
-  CC       = g++
+  CC       = g++-4.6
  endif
  ifeq (HDF5,$(findstring HDF5,$(OPT)))
   HDF5_HOME = /u/system/hdf5/1.8.7/serial
@@ -175,7 +175,7 @@ endif
 ifeq ($(SYSTYPE),"DMC-native")
   CC = icpc -mmic -O2
 #-vec-report6
-  OPTIMIZE = -std=c++11 -pedantic -Wfatal-errors -Wextra -Wall -Wstrict-aliasing=2 -Wundef -Wshadow -Wwrite-strings -Woverloaded-virtual -Wcast-qual -Wpointer-arith
+  OPTIMIZE = -std=c++0x -pedantic -Wfatal-errors -Wextra -Wall -Wstrict-aliasing=2 -Wundef -Wshadow -Wwrite-strings -Woverloaded-virtual -Wcast-qual -Wpointer-arith
 endif
 ifeq ($(SYSTYPE),"DMC-offload")
   ifeq (USE_MPI,$(findstring USE_MPI,$(OPT)))
@@ -197,13 +197,13 @@ ifeq ($(SYSTYPE),"TODI")
   HDF5_INCL = -I$(HDF5_HOME)/include
  endif
  ifeq (USE_MPI,$(findstring USE_MPI,$(OPT)))
-   CC       = CC
+   CC       = g++-4.6
  else
-   CC       = g++ -DDEVS_PER_NODE=1
+   CC       = g++-4.6 -DDEVS_PER_NODE=1
    #CC       = CC -DDEVS_PER_NODE=1 -DTODI
  endif
 ifeq (CUDA,$(findstring CUDA,$(OPT)))
-NVCC       =  nvcc -g -arch sm_35 -use_fast_math
+NVCC       =  nvcc -ccbin /usr/lib/ccache/g++-4.6 -g -arch sm_35 -use_fast_math
 LIB_OPT  += -L$(CUDATOOLKIT_HOME)/lib64 -lcudart
 SUP_INCL += -I$(CUDATOOLKIT_HOME)/include
 endif
@@ -240,7 +240,7 @@ ifeq ($(SYSTYPE),"RZG-SLES11-generic")
  ifeq (USE_MPI,$(findstring USE_MPI,$(OPT)))
   CC       = mpigxx
  else
-  CC       = g++
+  CC       = g++-4.6
  endif
  ifeq (HDF5,$(findstring HDF5,$(OPT)))
   HDF5_HOME = /afs/ipp/home/k/khr/soft/amd64_sles11/opt/hdf5/1.8.7
@@ -280,7 +280,7 @@ CC       =  c++
 endif
 #EIGER again
 ifeq (CUDA,$(findstring CUDA,$(OPT)))
-NVCC       =  nvcc -g
+NVCC       =  nvcc -ccbin /usr/lib/ccache/g++-4.6 -g
 CUDA_HOME  =  /apps/eiger/Cuda-4.0/cuda
 #LIB_OPT  += -L$(CUDA_HOME)/lib -L$(CUDA_HOME)/lib64 -lcudart
 LIB_OPT  += -L$(CUDA_HOME)/lib64 -lcudart
@@ -292,11 +292,11 @@ OMP =
 endif
 
 ifeq ($(SYSTYPE),"GP")
- CC       =  nvcc -g
+ CC       =  nvcc -ccbin /usr/lib/ccache/g++-4.6 -g
  ifeq (USE_MPI,$(findstring USE_MPI,$(OPT)))
   CC       =  mpicxx -g -I$(CUDA_HOME)/sdk/common/inc -I$(CUDA_HOME)/sdk/C/common/inc -I$(CUDA_HOME)/include
  endif
- NVCC       =  nvcc -g
+ NVCC       =  nvcc -ccbin /usr/lib/ccache/g++-4.6 -g
  OPTIMIZE = -O2
  LIB_OPT  =  -L$(CUDA_HOME)/lib -L$(CUDA_HOME)/lib64 -lcudart
  OMP =
@@ -319,12 +319,12 @@ ifeq ($(SYSTYPE),"PLX")
  ifeq (USE_MPI,$(findstring USE_MPI,$(OPT)))
   CC  =  mpiCC -g
  else
-  CC  = g++
+  CC  = g++-4.6
  endif
  OPTIMIZE = -O2 -DDEBUG
  OMP = #-fopenmp
  ifeq (CUDA,$(findstring CUDA,$(OPT)))
-  NVCC = nvcc -arch sm_20 -use_fast_math
+  NVCC = nvcc -ccbin /usr/lib/ccache/g++-4.6 -arch sm_20 -use_fast_math
   LIB_OPT  =  -L$(CUDA_HOME)/lib64 -lcudart
   SUP_INCL += -I$(CUDA_HOME)/include -I$(CUDA_SDK)/CUDALibraries/common/inc
  endif
@@ -418,7 +418,7 @@ RENDER_METHOD = -DRENDER_PP_FBO
 #
 # Uncomment for previewer DEBUG mode
 #----------------------------------
- PREVIEWER_DEBUG = -DDEBUG_MODE=1
+# PREVIEWER_DEBUG = -DDEBUG_MODE=1
 #----------------------------------
 
 ifeq (PREVIEWER,$(findstring PREVIEWER,$(OPT)))
@@ -521,4 +521,3 @@ cleangalaxy:
 
 realclean: clean
 	rm -f $(EXEC)
-
