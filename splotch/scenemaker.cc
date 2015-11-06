@@ -939,6 +939,11 @@ void sceneMaker::fetchFiles(vector<particle_sim> &particle_data, double fidx)
     case 15:
       ascii_reader(params,particle_data);
       break;
+#ifdef USE_FIVOX
+    case 16:
+      fivox_reader(params,particle_data);
+      break;
+#endif
     }
   mpiMgr.barrier();
   tstack_pop("Reading");

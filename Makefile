@@ -42,6 +42,9 @@ OPT += -DLONGIDS
 #--------------------------------------- MIC options
 # OPT += -DMIC
 
+#--------------------------------------- Fivox (BBP) loader
+OPT += -DUSE_FIVOX
+
 #--------------------------------------- Select target Computer
 SYSTYPE="SuperMuc"
 #SYSTYPE="generic"
@@ -387,6 +390,15 @@ endif
 ifeq (USE_MPIIO,$(findstring USE_MPIIO,$(OPT)))
  LIB_MPIIO = -Lmpiio-1.0/lib -lpartition
 endif
+
+# Fivox
+ifeq (USE_FIVOX,$(findstring USE_FIVOX,$(OPT)))
+ FIVOX_HOME ?= ../build/install
+ SUP_INCL += -I$(FIVOX_HOME)/include -I$(FIVOX_HOME)/include/ITK-4.8 -Wno-pragmas
+ OBJS += reader/fivox_reader.o
+ LIB_OPT += -L${FIVOX_HOME}/lib -lFivox -lBrion -lBBPSDK -lITKCommon-4.8 -litkvnl-4.8 -litksys-4.8 -litkvnl_algo-4.8 -lITKVNLInstantiation-4.8 -litkdouble-conversion-4.8 -litkv3p_netlib-4.8 -litkv3p_lsqr-4.8 -lMonsteer -lLunchbox -lzeq -lZeroBuf -lServus
+endif
+
 
 ##################################################
 #        SPLOTCH PREVIEWER SECTION
