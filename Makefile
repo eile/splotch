@@ -74,7 +74,7 @@ SYSTYPE="SuperMuc"
 ifeq (USE_MPI,$(findstring USE_MPI,$(OPT)))
  CC       = mpic++
 else
- CC       = g++-4.6
+ CC       = g++
 endif
 
 # OpenMP compiler switch
@@ -94,7 +94,7 @@ ifeq ($(SYSTYPE),"generic")
 
 # Generic 64bit cuda setup
 ifeq (CUDA,$(findstring CUDA,$(OPT)))
-NVCC       =  nvcc -ccbin /usr/lib/ccache/g++-4.6 -g
+NVCC       =  nvcc -ccbin /usr/lib/ccache/g++ -g
 CUDA_HOME  =  /opt/nvidia/cudatoolkit/default
 LIB_OPT  += -L$(CUDA_HOME)/lib64 -lcudart
 SUP_INCL += -I$(CUDA_HOME)/include
@@ -151,7 +151,7 @@ ifeq ($(SYSTYPE),"SuperMuc")
  ifeq (USE_MPI,$(findstring USE_MPI,$(OPT)))
   CC       = mpiCC
  else
-  CC       = g++-4.6
+  CC       = g++
  endif
  OPTIMIZE = -O3 -g -std=c++0x
  OMP =   -fopenmp
@@ -163,7 +163,7 @@ ifeq ($(SYSTYPE),"RZG-SLES11-VIZ")
  ifeq (USE_MPI,$(findstring USE_MPI,$(OPT)))
   CC       = mpic++
  else
-  CC       = g++-4.6
+  CC       = g++
  endif
  ifeq (HDF5,$(findstring HDF5,$(OPT)))
   HDF5_HOME = /u/system/hdf5/1.8.7/serial
@@ -200,13 +200,13 @@ ifeq ($(SYSTYPE),"TODI")
   HDF5_INCL = -I$(HDF5_HOME)/include
  endif
  ifeq (USE_MPI,$(findstring USE_MPI,$(OPT)))
-   CC       = g++-4.6
+   CC       = g++
  else
-   CC       = g++-4.6 -DDEVS_PER_NODE=1
+   CC       = g++ -DDEVS_PER_NODE=1
    #CC       = CC -DDEVS_PER_NODE=1 -DTODI
  endif
 ifeq (CUDA,$(findstring CUDA,$(OPT)))
-NVCC       =  nvcc -ccbin /usr/lib/ccache/g++-4.6 -g -arch sm_35 -use_fast_math
+NVCC       =  nvcc -ccbin /usr/lib/ccache/g++ -g -arch sm_35 -use_fast_math
 LIB_OPT  += -L$(CUDATOOLKIT_HOME)/lib64 -lcudart
 SUP_INCL += -I$(CUDATOOLKIT_HOME)/include
 endif
@@ -243,7 +243,7 @@ ifeq ($(SYSTYPE),"RZG-SLES11-generic")
  ifeq (USE_MPI,$(findstring USE_MPI,$(OPT)))
   CC       = mpigxx
  else
-  CC       = g++-4.6
+  CC       = g++
  endif
  ifeq (HDF5,$(findstring HDF5,$(OPT)))
   HDF5_HOME = /afs/ipp/home/k/khr/soft/amd64_sles11/opt/hdf5/1.8.7
@@ -283,7 +283,7 @@ CC       =  c++
 endif
 #EIGER again
 ifeq (CUDA,$(findstring CUDA,$(OPT)))
-NVCC       =  nvcc -ccbin /usr/lib/ccache/g++-4.6 -g
+NVCC       =  nvcc -ccbin /usr/lib/ccache/g++ -g
 CUDA_HOME  =  /apps/eiger/Cuda-4.0/cuda
 #LIB_OPT  += -L$(CUDA_HOME)/lib -L$(CUDA_HOME)/lib64 -lcudart
 LIB_OPT  += -L$(CUDA_HOME)/lib64 -lcudart
@@ -295,11 +295,11 @@ OMP =
 endif
 
 ifeq ($(SYSTYPE),"GP")
- CC       =  nvcc -ccbin /usr/lib/ccache/g++-4.6 -g
+ CC       =  nvcc -ccbin /usr/lib/ccache/g++ -g
  ifeq (USE_MPI,$(findstring USE_MPI,$(OPT)))
   CC       =  mpicxx -g -I$(CUDA_HOME)/sdk/common/inc -I$(CUDA_HOME)/sdk/C/common/inc -I$(CUDA_HOME)/include
  endif
- NVCC       =  nvcc -ccbin /usr/lib/ccache/g++-4.6 -g
+ NVCC       =  nvcc -ccbin /usr/lib/ccache/g++ -g
  OPTIMIZE = -O2
  LIB_OPT  =  -L$(CUDA_HOME)/lib -L$(CUDA_HOME)/lib64 -lcudart
  OMP =
@@ -322,12 +322,12 @@ ifeq ($(SYSTYPE),"PLX")
  ifeq (USE_MPI,$(findstring USE_MPI,$(OPT)))
   CC  =  mpiCC -g
  else
-  CC  = g++-4.6
+  CC  = g++
  endif
  OPTIMIZE = -O2 -DDEBUG
  OMP = #-fopenmp
  ifeq (CUDA,$(findstring CUDA,$(OPT)))
-  NVCC = nvcc -ccbin /usr/lib/ccache/g++-4.6 -arch sm_20 -use_fast_math
+  NVCC = nvcc -ccbin /usr/lib/ccache/g++ -arch sm_20 -use_fast_math
   LIB_OPT  =  -L$(CUDA_HOME)/lib64 -lcudart
   SUP_INCL += -I$(CUDA_HOME)/include -I$(CUDA_SDK)/CUDALibraries/common/inc
  endif
@@ -393,10 +393,13 @@ endif
 
 # Fivox
 ifeq (USE_FIVOX,$(findstring USE_FIVOX,$(OPT)))
- FIVOX_HOME ?= ../build/install
- SUP_INCL += -I$(FIVOX_HOME)/include -I$(FIVOX_HOME)/include/ITK-4.8 -Wno-pragmas
+ FIVOX_ROOT ?= ../release/install
+ ITK_VERSION ?= 4.7
+ ITK_ROOT = /gpfs/bbp.cscs.ch/apps/viz/bbp/dev/ITK/$(ITK_VERSION).0
+ ITK_ROOT ?= $(FIVOX_ROOT)
+ SUP_INCL += -I$(FIVOX_ROOT)/include -I$(ITK_ROOT)/include/ITK-$(ITK_VERSION) -Wno-pragmas
  OBJS += reader/fivox_reader.o
- LIB_OPT += -L${FIVOX_HOME}/lib -lFivox -lBrion -lBBPSDK -lITKCommon-4.8 -litkvnl-4.8 -litksys-4.8 -litkvnl_algo-4.8 -lITKVNLInstantiation-4.8 -litkdouble-conversion-4.8 -litkv3p_netlib-4.8 -litkv3p_lsqr-4.8 -lMonsteer -lLunchbox -lzeq -lZeroBuf -lServus
+ LIB_OPT += -L${FIVOX_ROOT}/lib -L${ITK_ROOT}/lib -lFivox -lBrion -lBBPSDK -lITKCommon-$(ITK_VERSION) -litkvnl-$(ITK_VERSION) -litksys-$(ITK_VERSION) -litkvnl_algo-$(ITK_VERSION) -lITKVNLInstantiation-$(ITK_VERSION) -litkdouble-conversion-$(ITK_VERSION) -litkv3p_netlib-$(ITK_VERSION) -litkv3p_lsqr-$(ITK_VERSION) -lMonsteer -lLunchbox -lzeq -lZeroBuf -lServus
 endif
 
 

@@ -5,7 +5,8 @@
 # This file can be downloaded from
 # http://www.mpa-garching.mpg.de/~kdolag/Splotch/Source/snap_092.gz
 # You'll have to unzip it afterwards
-infile=fivox://
+infile=fivoxspikes:///gpfs/bbp.cscs.ch/home/nachbaur/BlueConfig_3m?target=Mosaic,duration=10
+#infile=fivoxspikes:///gpfs/bbp.cscs.ch/home/nachbaur/BlueConfig_epileptic?target=Slice,duration=10
 
 # 0,1: plain binary file, 2: Gadget2, 3: Enzo, 4: millenium, 5: mpiio,
 # 6: mesh reader, 7: hdf7
@@ -29,7 +30,7 @@ intensity_min0=-11.8784
 intensity_max0=-1.44456
 color_label0=U
 color_present0=1
-color_is_vector0=FALSE
+color_is_vector0=TRUE
 color_min0=0.152815
 color_max0=6.29244
 
@@ -43,7 +44,7 @@ intensity_min1=-11.8359
 intensity_max1=-1.44703
 color_label1=AGE
 color_present1=1
-color_is_vector1=FALSE
+color_is_vector1=TRUE
 color_min1=-1.34248
 color_max1=0
 
@@ -69,10 +70,10 @@ sort_type=1
 
 minrad_pix = 1
 
-palette0=palettes/OldSplotch.pal
+palette0=palettes/Martin.pal
 brightness0=10.5
 
-palette1=palettes/OldSplotch.pal #palettes/M51.pal
+palette1=palettes/LongFancy.pal
 brightness1=1.5
 
 ############################
